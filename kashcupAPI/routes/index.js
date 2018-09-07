@@ -45,7 +45,7 @@ router.post('/modify', function (req, res) {
 //nuke option
 router.post('/modify', function (req, res) {
   //sql query
-
+  test
 });
 
 // data export route
