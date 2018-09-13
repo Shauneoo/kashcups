@@ -1,0 +1,68 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.container {
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.headerImage{
+  flex-grow: 0;
+  width: 100%;
+}
+
+.cupListContainer {
+  flex-grow: 1;
+  flex: 1;
+}
+
+.cupList {
+  list-style: none;
+  margin: 10px;
+  padding: 0;
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+}
+
+.cupContainer {
+  max-width: 6.3vw;
+  text-align: center;
+}
+
+.cup {
+  width: 100%;
+  height: 100%;
+}
+
+.cupIMG {
+  width: 100%;
+}
+
+.cupPoints {
+  margin: -5.3vw 0 1.8vw 0;
+}
+
+.cupID {
+  margin: 0;
+}
+
+
+form {
+  margin: 3em auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  font-size: 1.5em;
+}
+
+.userData{
+  text-align: center;
+  margin: 3em auto 0 auto;
+  font-size: 1.5em;
+}
