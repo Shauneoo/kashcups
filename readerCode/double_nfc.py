@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Global variables
-url = "http://192.168.1.99/kashcups/single_nfc.php"
+url = "http://192.168.1.99:3000/modify" #api calls: (interaction) /modify (voting) /voting
+station_id = 'int1' #interaction stations: [int1, int2] voting station ids: [v1a,v1b,v1c,v2a,v2b,v2c]
+type = "interaction" #types [vote, interaction]
 tag1 = ""
 tag2 = ""
 stat1=-1
@@ -13,12 +15,12 @@ try:
     import RPi.GPIO as GPIO
     import time
     import requests
-    
+
     # NFC
     import binascii
     import sys
     import Adafruit_PN532 as PN532
-    
+
     #NeoPixel Ring
     from neopixel import *
 
@@ -32,17 +34,17 @@ try:
     MOSI2 = 20
     MISO2 = 21
     SCLK2 = 26
-    
+
     #NeoPixel configuration
     LED_COUNT      = 48      # Number of LED pixels.
     LED_PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
     LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
     LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
     LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
-    LED_INVERT     = False   # True to invert the signal (when using NPN transistor 
+    LED_INVERT     = False   # True to invert the signal (when using NPN transistor
 
     # NFC constructor
-    
+
     # Create two instances of the PN532 class.
     pn532a = PN532.PN532(cs=CS1, sclk=SCLK1, mosi=MOSI1, miso=MISO1)
     pn532b = PN532.PN532(cs=CS2, sclk=SCLK2, mosi=MOSI2, miso=MISO2)
@@ -62,7 +64,7 @@ try:
     pn532a.SAM_configuration()
     pn532b.SAM_configuration()
 
-    
+
     # NeoPixel constructor
 
     # Create NeoPixel object with appropriate configuration.
@@ -70,7 +72,7 @@ try:
     # Intialize the library (must be called once before other functions).
     strip.begin()
 
-    
+
     # Common functions
     def check_status(nfc, strip, nfc_id):
         payload = {'mode': '1', 'nfc': nfc}
@@ -98,6 +100,15 @@ try:
         except:
             errCode(strip, Color(126, 255, 0))
 
+    def insert_history(nfc1, nfc2, type, station_id, strip):
+        payload = {'nfc1': nfc1, 'nfc2': nfc2, 'type': type, 'station_id': station_id}
+    	try:
+    	    r = requests.post(url, data=payload)
+            print(r.text)
+    	except:
+            print("error")
+    	    errCode(strip, Color(0, 0, 255))
+
     # NeoPixel functions
     def colorWipe(strip, color, nfc_id=None, wait_ms=50):
 	"""Wipe color across display a pixel at a time."""
@@ -115,7 +126,7 @@ try:
             for i in range(strip.numPixels()):
                 strip.setPixelColor(i, color)
                 strip.show()
-                time.sleep(wait_ms/1000.0)            
+                time.sleep(wait_ms/1000.0)
 
     def setColor(strip, color, nfc_id=None):
         if (nfc_id == 1):
@@ -130,7 +141,7 @@ try:
             for i in range(strip.numPixels()):
                 strip.setPixelColor(i, color)
                 strip.show()
-                
+
     def theaterChase(strip, color, nfc_id=None, wait_ms=50, iterations=10):
 	"""Movie theater light style chaser animation."""
 	if nfc_id == 1:
@@ -159,7 +170,7 @@ try:
                     strip.show()
                     time.sleep(wait_ms/1000.0)
                     for i in range(0, strip.numPixels(), 3):
-                        strip.setPixelColor(i+q, 0)            
+                        strip.setPixelColor(i+q, 0)
 
     def wheel(pos):
 	"""Generate rainbow colors across 0-255 positions."""
@@ -171,7 +182,7 @@ try:
 	else:
             pos -= 170
             return Color(0, pos * 3, 255 - pos * 3)
-	    
+
     def rainbow(strip, wait_ms=20, iterations=1):
 	"""Draw rainbow that fades across all pixels at once."""
 	for j in range(256*iterations):
@@ -187,12 +198,12 @@ try:
             setColor(strip, Color(0, 0, 0))
             time.sleep(0.5)
 
-            
+
     # Main Program
     rainbow(strip)  # Initialisation
     setColor(strip, Color(0, 0, 0)) # Off
     while True:
-        
+
         # Check if a card is available to read.
         uid1 = pn532a.read_passive_target()
         # Try again if no card is available.
@@ -215,7 +226,7 @@ try:
                     #update_status(3, nfc1, strip)
                     #check_status(nfc1, strip)
                 tag1 = nfc1
-        
+
         # Check if a card is available to read.
         uid2 = pn532b.read_passive_target()
         # Try again if no card is available.
@@ -226,7 +237,7 @@ try:
             #continue
         #print('Found card with UID: {0}'.format(binascii.hexlify(uid)))
         else:
-            nfc2 = binascii.hexlify(uid2)            
+            nfc2 = binascii.hexlify(uid2)
 
             if (tag2 != nfc2):
                 stat2 = check_status(nfc2, strip, 2)
@@ -238,21 +249,25 @@ try:
                     #update_status(3, nfc2, strip)
                     #check_status(nfc2, strip)
                 tag2 = nfc2
-                
+
         # Turn into on
         if (((stat1 == 0) | (stat2 == 0)) & ((stat1 != -1) & (stat2 != -1)) ):
             if (stat1 != 2) & (stat2 != 2):
-                if stat1 == 0:
-                    time.sleep(0.7) # Delay for red color
-                    update_status(2, nfc1, strip)
-                    colorWipe(strip, Color(255, 0, 0), 1) # Green
-                    stat1 = -1
-                if stat2 == 0:
-                    time.sleep(0.7) # Delay for red color
-                    update_status(2, nfc2, strip)
-                    colorWipe(strip, Color(255, 0, 0), 2) # Green
-                    stat2 = -1
-                
-            
+                # Commented by shaune
+                # if stat1 == 0:
+                #     time.sleep(0.7) # Delay for red color
+                #     update_status(2, nfc1, strip)
+                #     colorWipe(strip, Color(255, 0, 0), 1) # Green
+                #     stat1 = -1
+                # if stat2 == 0:
+                #     time.sleep(0.7) # Delay for red color
+                #     update_status(2, nfc2, strip)
+                #     colorWipe(strip, Color(255, 0, 0), 2) # Green
+                #     stat2 = -1
+                time.sleep(0.7) # Delay for red color
+                insert_history(nfc1,nfc2,station_id,type,strip)
+                colorWipe(strip, Color(255, 0, 0), 1) # Green
+
+
 except KeyboardInterrupt:
     GPIO.cleanup()
