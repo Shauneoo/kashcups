@@ -103,7 +103,7 @@ try:
     def insert_history(nfc1, nfc2, type, station_id, strip):
         payload = {'nfc1': nfc1, 'nfc2': nfc2, 'type': type, 'station_id': station_id}
     	try:
-    	    r = requests.post(url, data=payload)
+    	    r = requests.put(url, data=payload)
             print(r.text)
     	except:
             print("error")
@@ -209,12 +209,11 @@ try:
         uid2 = pn532a.read_passive_target()
 
         # uid1: from reader 1, uid2 from reader 2, type: global varible set at top, station_id: global varible set at top
-        test = {uid1, uid2, type, station_id} #delete after you ensure payload is correct
+        test = {uid1, uid2, type, station_id, strip} #delete after you ensure payload is correct
         print(test) #delete after you ensure payload is correct
 
         #Uncomment when youre sure the payload is correct
         #insert_history(uid1, uid2, type, station_id)
-
         # END OF JR
 
 
