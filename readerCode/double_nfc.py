@@ -204,69 +204,83 @@ try:
     setColor(strip, Color(0, 0, 0)) # Off
     while True:
 
-        # Check if a card is available to read.
+        # FOR JR
         uid1 = pn532a.read_passive_target()
-        # Try again if no card is available.
-        if uid1 is None:
-            setColor(strip, Color(0, 0, 0), 1) # Off
-            tag1 = ""
-            stat1 = -1
-            #continue
-        #print('Found card with UID: {0}'.format(binascii.hexlify(uid)))
-        else:
-            nfc1 = binascii.hexlify(uid1)
+        uid2 = pn532a.read_passive_target()
 
-            if (tag1 != nfc1):
-                stat1 = check_status(nfc1, strip, 1)
-                print nfc1
-                print stat1
-                #if stat1 == 1:
-                    #time.sleep(0.7) # Delay for green color
-                    #colorWipe(strip, Color(0, 255, 0)) # Red
-                    #update_status(3, nfc1, strip)
-                    #check_status(nfc1, strip)
-                tag1 = nfc1
+        # uid1: from reader 1, uid2 from reader 2, type: global varible set at top, station_id: global varible set at top
+        test = {uid1, uid2, type, station_id} #delete after you ensure payload is correct
+        print(test) #delete after you ensure payload is correct
 
-        # Check if a card is available to read.
-        uid2 = pn532b.read_passive_target()
-        # Try again if no card is available.
-        if uid2 is None:
-            setColor(strip, Color(0, 0, 0), 2) # Off
-            tag2 = ""
-            stat2 = -1
-            #continue
-        #print('Found card with UID: {0}'.format(binascii.hexlify(uid)))
-        else:
-            nfc2 = binascii.hexlify(uid2)
+        #Uncomment when youre sure the payload is correct
+        #insert_history(uid1, uid2, type, station_id)
 
-            if (tag2 != nfc2):
-                stat2 = check_status(nfc2, strip, 2)
-                print nfc2
-                print stat2
-                #if stat2 == 1:
-                    #time.sleep(0.7) # Delay for green color
-                    #colorWipe(strip, Color(0, 255, 0)) # Red
-                    #update_status(3, nfc2, strip)
-                    #check_status(nfc2, strip)
-                tag2 = nfc2
+        # END OF JR
 
-        # Turn into on
-        if (((stat1 == 0) | (stat2 == 0)) & ((stat1 != -1) & (stat2 != -1)) ):
-            if (stat1 != 2) & (stat2 != 2):
-                # Commented by shaune
-                # if stat1 == 0:
-                #     time.sleep(0.7) # Delay for red color
-                #     update_status(2, nfc1, strip)
-                #     colorWipe(strip, Color(255, 0, 0), 1) # Green
-                #     stat1 = -1
-                # if stat2 == 0:
-                #     time.sleep(0.7) # Delay for red color
-                #     update_status(2, nfc2, strip)
-                #     colorWipe(strip, Color(255, 0, 0), 2) # Green
-                #     stat2 = -1
-                time.sleep(0.7) # Delay for red color
-                insert_history(nfc1,nfc2,station_id,type,strip)
-                colorWipe(strip, Color(255, 0, 0), 1) # Green
+
+        # # Check if a card is available to read.
+        # uid1 = pn532a.read_passive_target()
+        # # Try again if no card is available.
+        # if uid1 is None:
+        #     setColor(strip, Color(0, 0, 0), 1) # Off
+        #     tag1 = ""
+        #     stat1 = -1
+        #     #continue
+        # #print('Found card with UID: {0}'.format(binascii.hexlify(uid)))
+        # else:
+        #     nfc1 = binascii.hexlify(uid1)
+        #
+        #     if (tag1 != nfc1):
+        #         stat1 = check_status(nfc1, strip, 1)
+        #         print nfc1
+        #         print stat1
+        #         #if stat1 == 1:
+        #             #time.sleep(0.7) # Delay for green color
+        #             #colorWipe(strip, Color(0, 255, 0)) # Red
+        #             #update_status(3, nfc1, strip)
+        #             #check_status(nfc1, strip)
+        #         tag1 = nfc1
+        #
+        # # Check if a card is available to read.
+        # uid2 = pn532b.read_passive_target()
+        # # Try again if no card is available.
+        # if uid2 is None:
+        #     setColor(strip, Color(0, 0, 0), 2) # Off
+        #     tag2 = ""
+        #     stat2 = -1
+        #     #continue
+        # #print('Found card with UID: {0}'.format(binascii.hexlify(uid)))
+        # else:
+        #     nfc2 = binascii.hexlify(uid2)
+        #
+        #     if (tag2 != nfc2):
+        #         stat2 = check_status(nfc2, strip, 2)
+        #         print nfc2
+        #         print stat2
+        #         #if stat2 == 1:
+        #             #time.sleep(0.7) # Delay for green color
+        #             #colorWipe(strip, Color(0, 255, 0)) # Red
+        #             #update_status(3, nfc2, strip)
+        #             #check_status(nfc2, strip)
+        #         tag2 = nfc2
+        #
+        # # Turn into on
+        # if (((stat1 == 0) | (stat2 == 0)) & ((stat1 != -1) & (stat2 != -1)) ):
+        #     if (stat1 != 2) & (stat2 != 2):
+        #         # Commented by shaune
+        #         # if stat1 == 0:
+        #         #     time.sleep(0.7) # Delay for red color
+        #         #     update_status(2, nfc1, strip)
+        #         #     colorWipe(strip, Color(255, 0, 0), 1) # Green
+        #         #     stat1 = -1
+        #         # if stat2 == 0:
+        #         #     time.sleep(0.7) # Delay for red color
+        #         #     update_status(2, nfc2, strip)
+        #         #     colorWipe(strip, Color(255, 0, 0), 2) # Green
+        #         #     stat2 = -1
+        #         time.sleep(0.7) # Delay for red color
+        #         insert_history(nfc1,nfc2,station_id,type,strip)
+        #         colorWipe(strip, Color(255, 0, 0), 1) # Green
 
 
 except KeyboardInterrupt:
