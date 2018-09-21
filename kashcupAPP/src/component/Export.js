@@ -20,7 +20,7 @@ class Export extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    axios.post('http://localhost:3000/export', {
+    axios.post('http://192.168.1.99:3000/export', {
       id: this.state.inputValue
     })
     .then((response) => {
